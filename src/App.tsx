@@ -16,12 +16,12 @@ function App() {
                     <Route
                         exact
                         path="/"
-                        component={PostsList}
-                    />
-                    <Route
-                        exact
-                        path="/"
-                        component={AddPostForm}
+                        render={() => (
+                            <>
+                                <AddPostForm />
+                                <PostsList />
+                            </>
+                        )}
                     />
                     <Route
                         exact
@@ -30,7 +30,7 @@ function App() {
                     />
                     <Route
                         exact
-                        path={'editPost/:postId'}
+                        path="/editPost/:postId"
                         component={EditPostForm}
                     />
                 </Switch>
