@@ -13,7 +13,7 @@ export const AddPostForm: React.FC = () => {
     const users = useSelector(usersCount);
     const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value);
     const onContentChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value);
-    const onAuthorChangeed = (e: any) => setUserId(e.target.value);
+    const onAuthorChangeed = (e: React.ChangeEvent<HTMLSelectElement>) => setUserId(e.target.value);
     const dispatch = useDispatch();
 
     const canSave = Boolean(title) && Boolean(content) && Boolean(userId);

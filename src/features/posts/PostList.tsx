@@ -1,16 +1,29 @@
-import { useSelector } from 'react-redux';
-import { postCount } from './postsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPosts, postCount, postUpdated, selectAllPosts } from './postsSlice';
 import { Link } from 'react-router-dom';
 import { PostAuthor } from './PostAuthor';
 import { TimeAgo } from './TimeAgo';
 import { ReactionButtons } from './ReactionButtons';
+import { RootState } from '../../app/store';
+import { useEffect } from 'react';
 
 export interface PostState {
     status: 'idle' | 'loading' | 'failed';
 }
 
 export const PostsList: React.FC = () => {
-    const posts = useSelector(postCount);
+    const dispatch = useDispatch();
+    const posts = useSelector(selectAllPosts);
+
+    const postStatus = useSelector((state: RootState) => state.posts.status);
+
+    useEffect(() => {
+        if (postStatus === 'idle') {
+            dispatch(fetchPosts());
+        }
+    }, [postStatus, dispatch]);
+
+    console.log(postUpdated({ id: '123', title: 'first', content: 'some text' }));
 
     const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
 

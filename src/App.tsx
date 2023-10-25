@@ -7,11 +7,13 @@ import { AddPostForm } from './features/posts/AddPostForm';
 import { BrowserRouter, Route, Router, Switch } from 'react-router-dom';
 import { SinglePostPage } from './features/posts/SinglePostPage';
 import { EditPostForm } from './features/posts/EditPostForm';
+import { Navbar } from './app/Navbar';
 
 function App() {
     return (
         <>
             <BrowserRouter>
+                <Navbar />
                 <Switch>
                     <Route
                         exact

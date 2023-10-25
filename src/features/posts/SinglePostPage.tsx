@@ -1,18 +1,17 @@
 import { useSelector } from 'react-redux';
-import { postCount } from './postsSlice';
+import { postCount, selectPostById } from './postsSlice';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { ReactionButtons } from './ReactionButtons';
+import { RootState } from '../../app/store';
 
 export interface MatchParmas {
     postId: string;
 }
 
 export const SinglePostPage: React.FC<RouteComponentProps<MatchParmas>> = ({ match }) => {
-    const posts = useSelector(postCount);
-
     const { postId } = match.params;
 
-    const post = useSelector(() => posts.find((post) => post.id === postId));
+    const post = useSelector((state: RootState) => selectPostById(state, postId));
 
     if (!post) {
         return (

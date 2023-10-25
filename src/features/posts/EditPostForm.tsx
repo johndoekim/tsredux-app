@@ -1,12 +1,13 @@
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { MatchParmas } from './SinglePostPage';
 import { useDispatch, useSelector } from 'react-redux';
-import { postCount, postUpdated } from './postsSlice';
+import { postCount, postUpdated, selectPostById } from './postsSlice';
 import { useState } from 'react';
+import { RootState } from '../../app/store';
 
 export const EditPostForm: React.FC<RouteComponentProps<MatchParmas>> = ({ match }) => {
     const { postId } = match.params;
-    const posts = useSelector(postCount);
+    const post = useSelector((state: RootState) => selectPostById(state, postId));
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -48,7 +49,9 @@ export const EditPostForm: React.FC<RouteComponentProps<MatchParmas>> = ({ match
                 <button
                     type="button"
                     onClick={onSavePostClicked}
-                />
+                >
+                    save post
+                </button>
             </section>
         </>
     );
