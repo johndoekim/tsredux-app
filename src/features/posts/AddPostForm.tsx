@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postAdded, reactionAdded } from './postsSlice';
+import { fetchPosts, postAdded, reactionAdded } from './postsSlice';
 import { nanoid } from '@reduxjs/toolkit';
 import { usersCount } from './usersSlice';
+import { client } from '../../api/client';
 
 export const AddPostForm: React.FC = () => {
     const [title, setTitle] = useState('');

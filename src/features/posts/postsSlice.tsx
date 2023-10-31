@@ -4,6 +4,7 @@ import { timeStamp } from 'console';
 import { sub } from 'date-fns';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { client } from '../../api/client';
+import { useDispatch } from 'react-redux';
 
 export type Reaction = 'thumbsUp' | 'hooray' | 'heart' | 'rocket' | 'eyes';
 
@@ -11,7 +12,7 @@ interface ReactionAddedAction {
     postId: string;
     reaction: Reaction;
 }
-interface Post {
+export interface Post {
     id: string;
     title: string;
     content: string;
@@ -20,18 +21,24 @@ interface Post {
     reactions: Record<Reaction, number>;
 }
 
+interface InitialState {
+    posts: Post[];
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
+    error: string | null | undefined;
+}
+
 export type apiStatus = {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
+    error: string | null | undefined;
 };
 
-const initialState: { posts: Post[]; status: apiStatus['status']; error: apiStatus['error'] } = {
+const initialState: InitialState = {
     posts: [],
     status: 'idle',
     error: null,
 };
 
-export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
+export const fetchPosts: any = createAsyncThunk('posts/fetchPosts', async () => {
     const response = await client.get('/fakeApi/posts');
     return response.data;
 });
@@ -47,12 +54,11 @@ const postsSlice = createSlice({
                 existingPost.reactions[reaction]++;
             }
         },
-
         postAdded: {
             reducer: (state, action) => {
                 state.posts.push(action.payload);
             },
-            prepare(title, content, userId, date?, user?) {
+            prepare(title, content, userId) {
                 return {
                     payload: {
                         id: nanoid(),
@@ -76,6 +82,20 @@ const postsSlice = createSlice({
             }
         },
     },
+    extraReducers(builder) {
+        builder
+            .addCase(fetchPosts.pending, (state, action) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchPosts.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.posts = state.posts.concat(action.payload);
+            })
+            .addCase(fetchPosts.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            });
+    },
 });
 
 export const postCount = (state: RootState) => state.posts;
@@ -85,6 +105,6 @@ export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions;
 export const selectAllPosts = (state: RootState) => state.posts.posts;
 
 export const selectPostById = (state: RootState, postId: string) =>
-    state.posts.posts.find((post: any) => post.id === postId);
+    state.posts.posts.find((post) => post.id === postId);
 
 export default postsSlice.reducer;
